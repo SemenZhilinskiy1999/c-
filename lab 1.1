@@ -1,0 +1,20 @@
+namespace ConsoleApplication19
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            Console.Write("a=");
+            double a = double.Parse(Console.ReadLine());
+            Console.Write("n=");
+            int n = int.Parse(Console.ReadLine());
+            double res = 1;
+            for (int i = 1; i <= n; i++)
+            {
+                res *= a;
+            }
+            Console.WriteLine("a в степени n = {0,10:f5}", res);
+            Console.ReadLine();
+        }
+    }
+}
