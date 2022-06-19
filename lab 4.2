@@ -1,0 +1,32 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+ 
+namespace Ключевые_слова_найти
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            //Для начала допустим, что имеем дело не с файлом а просто строкой
+            Console.WriteLine("При чтении из строки имеем");
+            string stroka = "Slovo1 drugieslova drugie slova Slovo2 drugie s l o v a Slovo3";
+            //Теперь считывать слова будем не из строки, а из файла
+            System.IO.StreamReader file = new System.IO.StreamReader(@"d:\file.txt");
+            Console.WriteLine("При чтении из файла имеем");
+            KluchSlova(file.ReadLine(), 3);
+            Console.ReadKey();
+        }
+        
+        public static void KluchSlova(string stroka, int n) //Вбиваем сюда строку и количество ключевых слов
+        {
+            for (int i = 0; i < n; i++)
+            {
+            if (stroka.Contains("Slovo" + (i+1).ToString())) Console.WriteLine("Slovo" + (i+1).ToString());
+            }
+            
+        }
+    }
+}
