@@ -1,0 +1,253 @@
+using System;
+ 
+namespace Mat
+{
+    class SquareMatrix
+    {
+        // Размер
+        private int dim;
+        // Данные. Один массив содержит dim * dim элементов матрицы
+        private double[] data;
+        // свойстов, только читаем
+        public int dimension
+        {
+            get
+            {
+                return dim;
+            }
+        }
+        // Конструктор
+        public SquareMatrix(int d)
+        {
+            // Размерность больше 0
+            if (d <= 0)
+                throw new ArgumentException("Invalid dimension");
+            dim = d;
+            data = new double[d * d];
+            // Занулить
+            for (int i = 0; i < d * d; i++)
+                data[i] = 0.0;
+        }
+        // Установить значение ячейки
+        public void SetAt(int x, int y, double val)
+        {
+            // Не вышли ли за границы?
+            if (x < 0 || y < 0 || x > dim - 1 || y > dim - 1)
+                throw new ArgumentException("Invalid dimension");
+            data[y * dim + x] = val;
+        }
+        // Взять значение ячейки
+        public double GetAt(int x, int y)
+        {
+            // Не вышли ли за границы?
+            if (x < 0 || y < 0 || x > dim - 1 || y > dim - 1)
+                throw new ArgumentException("Invalid dimension");
+            return this.data[y * this.dim + x];
+        }
+ 
+        // Сложение
+        public static SquareMatrix operator +(SquareMatrix l, SquareMatrix r)
+        {
+            if (l.dim != r.dim)
+                throw new ArithmeticException("Invalid matrices");
+            int d = l.dim, y, x;
+            SquareMatrix res = new SquareMatrix(d);
+            for (y = 0; y < d; y++)
+            {
+                for (x = 0; x < d; x++)
+                {
+                    res.data[y * d + x] = l.data[y * d + x] + r.data[y * d + x];
+                }
+            }
+            return res;
+        }
+        // Вычитание
+        public static SquareMatrix operator -(SquareMatrix l, SquareMatrix r)
+        {
+            if (l.dim != r.dim)
+                throw new ArithmeticException("Invalid matrices");
+            int d = l.dim, y, x;
+            SquareMatrix res = new SquareMatrix(d);
+            for (y = 0; y < d; y++)
+            {
+                for (x = 0; x < d; x++)
+                {
+                    res.data[y * d + x] = l.data[y * d + x] - r.data[y * d + x];
+                }
+            }
+            return res;
+        }
+       
+        // Поделить матрицу на число(надо для обратной)
+        public static SquareMatrix operator /(SquareMatrix l, double divisor)
+        {
+            if (divisor == 0.0)
+                throw new ArithmeticException("Деление на ноль");
+            SquareMatrix res = new SquareMatrix(l.dim);
+            int x, y;
+            for (y = 0; y < l.dim; y++)
+                for (x = 0; y < l.dim; x++)
+                    res.SetAt(x, y, l.GetAt(x, y) / divisor);
+            return res;
+        }
+        // Умножение матриц
+        public static SquareMatrix operator *(SquareMatrix l, SquareMatrix r)
+        {
+            if (l.dim != r.dim)
+                throw new ArithmeticException("Invalid matricies");
+            int d = l.dim;
+            SquareMatrix res = new SquareMatrix(d);
+            int x, y, i;
+            for (y = 0; y < d; y++)
+            {
+                for (x = 0; x < d; x++)
+                {
+                    res.data[y * d + x] = 0.0;
+                    for (i = 0; i < d; i++)
+                        res.data[y * d + x] += l.data[y * d + i] * r.data[i * d + x];
+                }
+            }
+            return res;
+        }
+        // Транспонирование
+        public SquareMatrix Transpone()
+        {
+            SquareMatrix res = new SquareMatrix(dim);
+            int x, y;
+            // Просто отзеркалим
+            for (y = 0; y < dim - 1; y++)
+                for (x = 0; x < dim - 1; x++)
+                    res.SetAt(x, y, GetAt(y, x));
+            return res;
+        }
+        // Подматрица, полученная вычеркиванием строчки и столбца(надо дальше)
+        public SquareMatrix Submatrix(int noCol, int noRow)
+        {
+            if (dim == 1)
+                throw new ArithmeticException();
+            // Подматрица меньше исходной на 1 строчку и колонку
+            SquareMatrix res = new SquareMatrix(dim - 1);
+            int x, y;
+            // Сначала копирем до вычеркнутой строчки
+            for (y = 0; y < noRow; y++)
+            {
+                // до вычеркнутой колонки
+                for (x = 0; x < noCol; x++)
+                {
+                    res.SetAt(x, y, GetAt(x, y));
+                }
+                // после вычеркнутой колонки
+                for (x = noCol + 1; x < dim; x++)
+                {
+                    res.SetAt(x - 1, y, GetAt(x, y));
+                }
+            }
+            // копируем после вычеркнутой строчки
+            for (y = noRow + 1; y < dim; y++)
+            {
+                // до вычеркнутой колонки
+                for (x = 0; x < noCol; x++)
+                {
+                    res.SetAt(x, y - 1, GetAt(x, y));
+                }
+                // после вычеркнутой колонки
+                for (x = noCol + 1; x < dim; x++)
+                {
+                    res.SetAt(x - 1, y - 1, GetAt(x, y));
+                }
+            }
+            return res;
+        }
+        // Вырожеднная?
+        public bool IsSingular()
+        {
+            // Равен ли определитель 0
+            return (Determinant() == 0);
+        }
+        // Определитель
+        public double Determinant()
+        {
+            // Частные простые случаи
+            if (dim == 1)
+                return GetAt(0, 0);
+            if (dim == 2)
+                return GetAt(0, 0) * GetAt(1, 1) - GetAt(1, 0) * GetAt(0, 1);
+            double res = 0.0;
+            int x;
+            // Умножение элементов столбика(первого) на соответсвующие полматрицы с нужным знаком
+            for (x = 0; x < dim; x++)
+            {
+                int sign = ((0 + x) % 2 == 0) ? 1 : -1;
+                SquareMatrix sub = Submatrix(x, 0);
+                res += sign * GetAt(x ,0) * sub.Determinant();
+            }
+            return res;
+        }
+        // Обратная матрица
+        public SquareMatrix Reverse()
+        {
+            // Того же размера
+            SquareMatrix res = new SquareMatrix(dim);
+            int x, y;
+            double det = Determinant();
+            if (det == 0.0)
+                throw new ArithmeticException("Не существует обратной матрицы ибо определитель =0");
+            for (y = 0; y < dim; y++)
+            {
+                for (x = 0; x < dim; x++)
+                {
+                    SquareMatrix minor = Submatrix(x, y);
+                    int sign = ((x + y) % 2 == 0) ? 1 : -1;
+                    res.SetAt(x, y, sign * GetAt(x, y) * minor.Determinant());
+                }
+            }
+            // Транспонируем
+            res = res.Transpone();
+            // Разделть каждый элемент
+            res = res / det;
+            return res;
+        }
+        // Напечатать матрицу
+        public void PrintMatrix()
+        {
+            int y, x;
+            for (y = 0; y < dim; y++)
+            {
+                for (x = 0; x < dim; x++)
+                {
+                    System.Console.Write(data[y * dim + x]);
+                    System.Console.Write("  ");
+                }
+                System.Console.WriteLine();
+            }
+        }
+ 
+    }
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            try
+            {
+                // Матрица 3х3, инициализирована 0
+                SquareMatrix m = new SquareMatrix(3);
+                // установим некоторые данные
+                m.SetAt(0, 0, 3);
+                m.SetAt(1, 1, 2);
+                m.SetAt(2, 2, 2);
+                m.SetAt(2, 1, 1);
+                m.SetAt(1, 2, 1);
+                m.PrintMatrix();
+                Console.Write(m.Determinant());
+                Console.Write(m.Reverse());
+                Console.Write(m.Transpone());
+            }
+            catch (Exception ex)
+            {
+                Console.Write(ex.Message);
+            }
+            Console.WriteLine();
+            Console.ReadKey(); 
+        }
+    }
+}
