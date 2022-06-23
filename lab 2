@@ -1,0 +1,110 @@
+using System;
+	namespace ConsApp_electronic document
+	class Program.	static void Main(string[] args)
+	electronic document [] electronic document =
+	new electronic document ("Похищение манхэттена", "Джон Стиц", "АСТ", 432u, 1993u),
+new electronic document ("C# 4.0. Полное руководство", "Герберт Шилдт", "Вильямс", 1056u, 2013u)
+	new electronic document ("Иррациональный мозг. Почему мы думаем одно, а делаем - другое", "Антон Малютин", "Эксмо", 352u, 2011u),
+	new electronic document ("LINQ. Язык интегрированных запросов в C# 2010 для профессионалов", "Адам Фримен, Джозеф Раттц-мл.", "Вильямс", 656u, 2011u),
+	new electronic document ("Принципы, паттерны и методики гибкой разработки на языке C#", "Р. С. Мартин, М. Мартин", "Символ-Плюс", 768u, 2011u),
+
+	new electronic document ("Какой-то документ 1", "Какой-то издатель 1"),
+	new electronic document ("Какой-то документ  2")
+	};
+	
+	Display(electronic document);
+
+	Console.ReadKey();
+	}
+	
+	static void Display(electronic document [] electronic document) //выводить на экран должен этот класс, а никак не electronic document, иначе быдлокод
+	{
+	foreach (var electronic documentin electronic document)
+	{
+	WriteColoredLine("----------------------------------------", ConsoleColor.Yellow);
+	Console.WriteLine(electronic document); //Автоматом будет вызван метод ToString()
+Console.WriteLine();
+	}
+	}
+
+	static void WriteColoredLine(string text, ConsoleColor color)
+	{
+	ConsoleColor currentColor = Console.ForegroundColor;
+	Console.ForegroundColor = color;
+	Console.WriteLine(text);
+	Console.ForegroundColor = currentColor;
+	}
+	}
+	
+	public class electronic document
+	{
+	#region Поля
+
+	private string _title; //названия документа
+	private string _author; //автор документа
+	private string _publisherName; //название издательства
+	private uint _pageQuantity; //количество страниц
+	private uint _publicationDate; //год выпуска (дата публикации)
+	#endregion
+	
+	#region Конструкторы
+	
+	public electronic document (string title)
+	: this(title, string.Empty, string.Empty, 1u, 0u)
+	{
+	}
+	
+	public electronic document (string title, string author)
+	: this(title, author, string.Empty, 1u, 0u)
+	{
+	}
+	
+	public electronic document (string title, string author, string publisherName, uint pageQuantity, uint publicationDate)
+	{
+	Title = title;
+	Author = author;
+PublisherName = publisherName;
+PageQuantity = pageQuantity;
+	PublicationDate = publicationDate;
+	}
+	#endregion
+	
+	#region Свойства
+	
+	public string Title
+	{
+	get { return _title; }
+	set { _title = value; }
+	}
+	
+	public string Author
+	{
+	get { return _author; }
+	set { _author = value; }
+	}
+	
+	public string PublisherName
+	{
+	get { return _publisherName; }
+	set { _publisherName = value; }
+	}
+
+	public uint PageQuantity
+	{
+	get { return _pageQuantity; }
+	set { _pageQuantity = value; }
+	}
+	
+	public uint PublicationDate
+	{
+	get { return _publicationDate; }
+	set { _publicationDate = value; }
+	}
+	#endregion
+	
+	public override string ToString()
+	{
+	return string.Format("Название: {0}\r\nАвтор: {1}\r\nНазвание документа: {2}\r\nКоличество страниц: {3}\r\nГод выпуска: {4}",
+	Title, Author, PublisherName, PageQuantity.ToString(), PublicationDate.ToString());
+	}
+	}
